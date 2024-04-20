@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Smart Safe",
+    "slug": "Smart Safe",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/Logo-SmartSafe2.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/Logo-SmartSafe2.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff",
+      "permissions": [
+        "CAMERA_ROLL",
+        "MEDIA_LIBRARY"
+      ]
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.yourappname",
+      "infoPlist": {
+        "UIFileSharingEnabled": true,
+        "NSPhotoLibraryUsageDescription": "Permite o acesso à biblioteca de fotos para selecionar imagens.",
+        "NSCameraUsageDescription": "Permite o acesso à câmera para tirar fotos.",
+        "NSMicrophoneUsageDescription": "Permite o acesso ao microfone para gravar áudio."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff",
+        "permissions": [
+          "ACCESS_FINE_LOCATION",
+          "ACCESS_COARSE_LOCATION",
+          "READ_EXTERNAL_STORAGE",
+          "WRITE_EXTERNAL_STORAGE",
+          "ACCELEROMETER",
+          "SEND_EMAIL",
+          "CAMERA",
+          "CAMERA_ROLL",
+          "MEDIA_LIBRARY",
+          "READ_CONTACTS"
+        ]
+      },
+      "package": "com.yourcompany.yourappname"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ],
+      "expo-font"
+    ]
+  }
+}
