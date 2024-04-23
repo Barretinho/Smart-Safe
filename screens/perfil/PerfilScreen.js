@@ -178,9 +178,9 @@ const Perfil = ({ navigation }) => {
               uri:
                 image ||
                 (perfilData && perfilData.foto !== "" && perfilData.foto) ||
-                "https://www.flaticon.com/br/icone-gratis/do-utilizador_2102647",
+                "https://picsum.photos/id/237/200/300",
             }}
-            style={{ width: 130, height: 130, borderRadius: 200 }}
+            style={{ width: 130, height: 130, borderRadius: 200, borderWidth: 3, borderColor: "#ccc" }}
           />
         </TouchableOpacity>
         {image && !uploaded && (

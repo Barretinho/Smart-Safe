@@ -83,10 +83,10 @@ const MainTabs = ({ navigation }) => {
             {perfilImage !== "" ? (
               <Image
                 source={{ uri: perfilImage  }}
-                style={{ width: 50, height: 50, borderRadius: 100}}
+                style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 1.5, borderColor: "#fff"}}
               />
             ) : (
-              <Icon name="user-circle" size={35} color="#fff" />
+              "https://picsum.photos/id/237/200/300"
             )}
           </TouchableOpacity>
         ),

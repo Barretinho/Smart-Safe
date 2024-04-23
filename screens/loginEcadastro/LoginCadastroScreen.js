@@ -35,16 +35,10 @@ const LoginCadastroScreen = () => {
 
   const handleOk = () => {
     setShowWelcomeModal(false);
-    setModalShown(true);
     AsyncStorage.setItem('welcomeModalShown', 'true');
-    navigation.navigate("MainTabs"); // Redireciona para a tela principal após o login
+    navigation.navigate("LoginCadastro"); // Redireciona para a tela principal após o login
   };
 
-  const handleNoShowAgain = () => {
-    setShowWelcomeModal(false);
-    setModalShown(true);
-    navigation.navigate("MainTabs"); // Redireciona para a tela principal após o login
-  };
 
   const [fontsLoaded] = useFonts({
     Roboto: require("../../src/fonts/Roboto-Thin.ttf"),
@@ -53,7 +47,7 @@ const LoginCadastroScreen = () => {
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1000,
+      duration: 1500,
       useNativeDriver: true,
     }).start();
   
@@ -66,6 +60,7 @@ const LoginCadastroScreen = () => {
         setHideWelcomeModal(true);
       }
     });
+    
   }, []);
 
   const checkUserLoggedIn = async () => {
