@@ -32,7 +32,7 @@ const LoginScreen = ({navigation }) => {
       const isBiometricAvailable = await LocalAuthentication.hasHardwareAsync() && await LocalAuthentication.isEnrolledAsync();
       
       if (isBiometricAvailable) {
-        const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Para a sua segurança, faça login usando sua autenticação biométrica ou senha do dispositivo' });
+        const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Autenticação' });
   
         if (result.success) {
           const auth = getAuth();

@@ -10,18 +10,22 @@ import AdicionarContatoScreen from "./screens/adicionar/AdicionarContatoScreen";
 import PerfilScreen from "./screens/perfil/PerfilScreen";
 import SegundaParte from "./screens/cadastro/SegundaParte";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen/ResetPassword";
+import DadosdoUsuario from "./screens/dadosdoUsuario/Dados";
 import MapScreen from "./screens/mapa/mapaScreen";
 import { TouchableOpacity, StyleSheet, Image } from "react-native";
 import Cadastro from "./screens/cadastro/CadastroScreen";
 import Emergencia from "./screens/ContatosdeEmergencia/ContatosEmergencia";
 import { getAuth } from "firebase/auth";
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, child, get, set } from "firebase/database";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const MainTabs = ({ navigation }) => {
   const [perfilImage, setPerfilImage] = useState(null);
+  const [perfilNome, setPerfilNome] = useState(null);
+  const [perfilSobrenome, setPerfilSobrenome] = useState(null);
+  
 
   const fetchUserProfile = async () => {
     try {
@@ -38,6 +42,8 @@ const MainTabs = ({ navigation }) => {
           const userData = snapshot.val();
           console.log("Dados do usuário:", userData);
           setPerfilImage(userData.foto)
+          setPerfilNome(userData.nome);
+          setPerfilSobrenome(userData.sobrenome);
         } else {
           console.log("Nenhum dado encontrado para o usuário logado");
         }
@@ -49,7 +55,6 @@ const MainTabs = ({ navigation }) => {
     }
   };
 
-  // Pronto Marquin deu certo, testa a~i pra ver
 
   useEffect(() => {
     navigation.addListener('focus', () => fetchUserProfile())
@@ -80,14 +85,10 @@ const MainTabs = ({ navigation }) => {
             onPress={() => navigation.navigate("Perfil")}
             style={styles.profileIcon}
           >
-            {perfilImage !== "" ? (
               <Image
-                source={{ uri: perfilImage  }}
+                source={{ uri: perfilImage || `https://avatar.iran.liara.run/username?username=${perfilNome +"+"+ perfilSobrenome}` }}
                 style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 1.5, borderColor: "#fff"}}
               />
-            ) : (
-              "https://picsum.photos/id/237/200/300"
-            )}
           </TouchableOpacity>
         ),
       }}
@@ -119,6 +120,16 @@ const MainTabs = ({ navigation }) => {
           headerTitle: '',
           drawerIcon: ({ color, size }) => (
             <Icon name="phone" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Dados do Usuário"
+        component={DadosdoUsuario}
+        options={{
+          headerTitle: '',
+          drawerIcon: ({ color, size }) => (
+            <Icon name="user" size={size} color={color} />
           ),
         }}
       />
@@ -176,6 +187,11 @@ const App = () => {
         <Stack.Screen
           name="Cadastro"
           component={Cadastro}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Dados do Usúario"
+          component={DadosdoUsuario}
           options={{ headerShown: false }}
         />
         <Stack.Screen

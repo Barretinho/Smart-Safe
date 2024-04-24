@@ -146,7 +146,6 @@ const SegundaParte = () => {
           sobrenome,
           dataNascimento,
           cpf,
-          senha,
         };
 
         await SecureStore.setItemAsync(

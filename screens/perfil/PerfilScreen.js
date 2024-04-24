@@ -178,14 +178,15 @@ const Perfil = ({ navigation }) => {
               uri:
                 image ||
                 (perfilData && perfilData.foto !== "" && perfilData.foto) ||
-                "https://picsum.photos/id/237/200/300",
+
+              `https://avatar.iran.liara.run/username?username=${perfilData && perfilData.nome +"+"+ perfilData.sobrenome} `
             }}
-            style={{ width: 130, height: 130, borderRadius: 200, borderWidth: 3, borderColor: "#ccc" }}
+            style={{ width: 115, height: 115, borderRadius: 200, borderWidth: 2, borderColor: "#fff8", }}
           />
         </TouchableOpacity>
         {image && !uploaded && (
           <TouchableOpacity onPress={uploadImage} style={styles.enviarFoto}>
-            <Text style={styles.textEnviarFoto}>Concluir</Text>
+            <Text style={styles.textEnviarFoto}>CONCLUIR</Text>
           </TouchableOpacity>
         )}
         {uploading && <ActivityIndicator />}
