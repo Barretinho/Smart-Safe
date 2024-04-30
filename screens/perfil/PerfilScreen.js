@@ -216,7 +216,7 @@ const Perfil = ({ navigation }) => {
           style={[styles.button, { backgroundColor: "#FF5722" }]}
         >
           <Icon name="sign-out" size={20} color="white" />
-          <Text style={styles.buttonText}>Logout</Text>
+          <Text style={styles.buttonText}>Sair da conta</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

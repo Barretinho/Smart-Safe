@@ -289,12 +289,10 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: 12,
-    position: "absolute",
-    bottom: 10,
-    left: 90,
+    bottom: 20,
+    textAlign: 'center',
     width: "100%",
   },
-  // Estilos para o modal
   modalContainer: {
     flex: 1,
     justifyContent: "center",

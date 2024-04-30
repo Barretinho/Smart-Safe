@@ -12,8 +12,10 @@ import SegundaParte from "./screens/cadastro/SegundaParte";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen/ResetPassword";
 import DadosdoUsuario from "./screens/dadosdoUsuario/Dados";
 import MapScreen from "./screens/mapa/mapaScreen";
-import { TouchableOpacity, StyleSheet, Image } from "react-native";
+import { TouchableOpacity, StyleSheet, Image, StatusBar } from "react-native";
 import Cadastro from "./screens/cadastro/CadastroScreen";
+import Audio from "./screens/audio/Audio"
+import ChatBot from "./screens/ChatBot/ChatBot";
 import Emergencia from "./screens/ContatosdeEmergencia/ContatosEmergencia";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, child, get, set } from "firebase/database";
@@ -61,18 +63,19 @@ const MainTabs = ({ navigation }) => {
   }, [navigation])
 
   return (
+    
     <Drawer.Navigator
       screenOptions={{
         drawerStyle: {
-          backgroundColor: "#fff",
-          width: 250,
+          backgroundColor: "#3c0c7b",
+          width: 240,
         },
         drawerActiveTintColor: "#9344fa",
-        drawerInactiveTintColor: "#000000",
+        drawerInactiveTintColor: "#fff",
         itemStyle: { marginVertical: 5 },
-        labelStyle: { fontSize: 20, fontWeight: "normal" },
+        labelStyle: { fontSize: 25, fontWeight: "normal" },
         headerStyle: {
-          height: 100,
+          height: 90,
           backgroundColor: "#9344fa",
         },
         headerTintColor: "#fff",
@@ -87,7 +90,7 @@ const MainTabs = ({ navigation }) => {
           >
               <Image
                 source={{ uri: perfilImage || `https://avatar.iran.liara.run/username?username=${perfilNome +"+"+ perfilSobrenome}` }}
-                style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 1.5, borderColor: "#fff"}}
+                style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: "#3c0c7b"}}
               />
           </TouchableOpacity>
         ),
@@ -124,6 +127,16 @@ const MainTabs = ({ navigation }) => {
         }}
       />
       <Drawer.Screen
+        name="Audios Gravados"
+        component={Audio}
+        options={{
+          headerTitle: '',
+          drawerIcon: ({ color, size }) => (
+            <Icon name="music" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="Dados do Usuário"
         component={DadosdoUsuario}
         options={{
@@ -141,7 +154,15 @@ const MainTabs = ({ navigation }) => {
 const App = () => {
   return (
     <NavigationContainer>
+      <StatusBar
+    barStyle = "#fff"
+    backgroundColor={"transparent"}
+    hidden = {false}
+    translucent = {true}
+    networkActivityIndicatorVisible = {true}
+/>
       <Stack.Navigator initialRouteName="LoginCadastro">
+        
         <Stack.Screen
           name="MainTabs"
           component={MainTabs}
@@ -192,6 +213,16 @@ const App = () => {
         <Stack.Screen
           name="Dados do Usúario"
           component={DadosdoUsuario}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Audios Gravados"
+          component={Audio}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ChatBot"
+          component={ChatBot}
           options={{ headerShown: false }}
         />
         <Stack.Screen

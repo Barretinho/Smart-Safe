@@ -12,8 +12,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Contacts from "expo-contacts";
-import * as SMS from "expo-sms";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getDatabase, ref, set } from "firebase/database";
+import { getAuth } from "firebase/auth";
+import * as SMS from "expo-sms";
 
 const AdicionarContatoScreen = () => {
   const [selectedContacts, setSelectedContacts] = useState([]);
@@ -23,6 +25,8 @@ const AdicionarContatoScreen = () => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [allContacts, setAllContacts] = useState([]);
+  const [userId, setUserId] = useState(null); // Armazenar o ID do usuário
+  
 
   useEffect(() => {
     const requestContactsPermission = async () => {
@@ -44,11 +48,37 @@ const AdicionarContatoScreen = () => {
 
     requestContactsPermission();
     loadContacts();
+    fetchUserId(); // Obter o ID do usuário ao carregar o componente
   }, []);
 
   useEffect(() => {
     saveContacts();
   }, [addedContacts]);
+
+  const fetchUserId = () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setUserId(user.uid);
+    }
+  };
+
+  const handleAddSelectedContact = (contact) => {
+    const isContactAlreadyAdded = addedContacts.some(
+      (addedContact) => addedContact.id === contact.id
+    );
+
+    if (!isContactAlreadyAdded) {
+      const newAddedContacts = [...addedContacts, {
+        id: contact.id,
+        name: contact.name,
+        phoneNumbers: contact.phoneNumbers,
+      }];
+      setAddedContacts(newAddedContacts);
+      sendContactsToDatabase(newAddedContacts);
+      setShowContactListModal(false);
+    }
+  };
 
   const loadContacts = async () => {
     try {
@@ -72,10 +102,17 @@ const AdicionarContatoScreen = () => {
     }
   };
 
+  const sendContactsToDatabase = (contacts) => {
+    const db = getDatabase();
+    const contactsRef = ref(db, `Contatos/${userId}`);
+    set(contactsRef, contacts);
+  };
+
   const handleDeleteContact = (index) => {
     const updatedContacts = [...addedContacts];
     updatedContacts.splice(index, 1);
     setAddedContacts(updatedContacts);
+    sendContactsToDatabase(updatedContacts); // Atualizar o banco de dados após excluir o contato
   };
 
   const handleCallContact = (phoneNumber) => {
@@ -83,22 +120,27 @@ const AdicionarContatoScreen = () => {
   };
 
   const handleSendSMS = async (phoneNumber) => {
-    const isAvailable = await SMS.isAvailableAsync();
-    if (isAvailable) {
-      SMS.sendSMSAsync([phoneNumber], "");
-    } else {
-      console.log("SMS is not available on this device");
+    try {
+      const isAvailable = await SMS.isAvailableAsync();
+      if (isAvailable) {
+        await SMS.sendSMSAsync(phoneNumber, 'Sua mensagem aqui');
+        console.log('Mensagem enviada com sucesso para:', phoneNumber);
+      } else {
+        console.log('SMS is not available on this device');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
     }
   };
 
   const handleSearch = (text) => {
     setSearchTerm(text);
-  
+
     if (!text) {
       setSelectedContacts([]);
       return;
     }
-  
+
     const filteredContacts = allContacts.filter((contact) => {
       const validName =
         contact.name &&
@@ -108,10 +150,10 @@ const AdicionarContatoScreen = () => {
         contact.phoneNumbers.some((phone) =>
           phone.number.toLowerCase().includes(text.toLowerCase())
         );
-  
+
       return validName || validPhoneNumber;
     });
-  
+
     const sortedContacts = filteredContacts.sort((a, b) => {
       // Priorizar a ordenação por nome se o texto de pesquisa for alfabético
       if (isNaN(text)) {
@@ -120,18 +162,17 @@ const AdicionarContatoScreen = () => {
       // Caso contrário, priorizar a ordenação por número
       return a.phoneNumbers[0].number.localeCompare(b.phoneNumbers[0].number);
     });
-  
+
     setSelectedContacts(sortedContacts);
   };
-  
 
   const renderContactItem = ({ item }) => {
     if (!item.name || item.name === "null" || item.name === "null null") {
       return null; // Retorna null para não renderizar nada
     }
-  
+
     return (
-      <TouchableOpacity onPress={() => handleAddSelectedContacts(item)}>
+      <TouchableOpacity onPress={() => handleAddSelectedContact(item)}>
         <View style={styles.contactItem}>
           <Text style={styles.contactName}>{item.name}</Text>
           {item.phoneNumbers && item.phoneNumbers.length > 0 && (
@@ -143,35 +184,7 @@ const AdicionarContatoScreen = () => {
       </TouchableOpacity>
     );
   };
-  
-  
 
-  const handleAddSelectedContacts = (contact) => {
-    const isContactAlreadyAdded = addedContacts.some(
-      (addedContact) => addedContact.id === contact.id
-    );
-  
-    if (!isContactAlreadyAdded) {
-      const newContact = {
-        id: contact.id,
-        name: contact.name,
-        phoneNumbers: contact.phoneNumbers,
-      };
-  
-      const newAddedContacts = [...addedContacts, newContact];
-      setAddedContacts(newAddedContacts);
-  
-      setConfirmationMessage(`${contact.name} adicionado com sucesso`);
-      setShowConfirmationModal(true);
-      setTimeout(() => setShowConfirmationModal(false), 2000);
-    } else {
-      setConfirmationMessage(`${contact.name} já está na lista de contatos`);
-      setShowConfirmationModal(true);
-      setTimeout(() => setShowConfirmationModal(false), 2000);
-    }
-    setShowContactListModal(false);
-  };
-  
   const renderAddedContactItem = ({ item, index }) => (
     <View style={styles.contactContainer}>
       <View style={styles.contactItem}>
@@ -214,6 +227,7 @@ const AdicionarContatoScreen = () => {
 
   const handleDeleteAllContacts = () => {
     setAddedContacts([]); // Limpa a lista de contatos adicionados
+    sendContactsToDatabase([]); // Limpar os contatos no banco de dados
   };
 
   return (
@@ -250,7 +264,7 @@ const AdicionarContatoScreen = () => {
           />
           {selectedContacts.length === 0 && (
             <View style={styles.noContactsContainer}>
-              <Text style={styles.noContactsText}>Contato não existe</Text>
+              <Text style={styles.noContactsText}>Adicione algum contato</Text>
             </View>
           )}
           {selectedContacts.length > 0 && (
@@ -265,9 +279,7 @@ const AdicionarContatoScreen = () => {
             <TouchableOpacity onPress={() => setShowContactListModal(false)}>
               <Text style={styles.modalButtonText}>Fechar</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleAddSelectedContacts}>
-              <Text style={styles.modalButtonText}>Concluir</Text>
-            </TouchableOpacity>
+            {/* Remove handleAddSelectedContacts from here */}
           </View>
         </SafeAreaView>
       </Modal>
