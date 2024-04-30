@@ -27,28 +27,27 @@ const LoginScreen = ({navigation }) => {
 
   const handleLogin = async () => {
     setIsLoading(true);
-
+  
     try {
       const isBiometricAvailable = await LocalAuthentication.hasHardwareAsync() && await LocalAuthentication.isEnrolledAsync();
-      
+      let isAuthenticated = false;
+  
       if (isBiometricAvailable) {
         const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Autenticação' });
-  
-        if (result.success) {
-          const auth = getAuth();
-          const login = await signInWithEmailAndPassword(auth, email, senha);
-          await SecureStore.setItemAsync('userEmail', email);
-          await SecureStore.setItemAsync('userPassword', senha);
-          navigation.navigate("MainTabs");
-        } else {
-          Alert.alert('Erro', 'Autenticação biométrica ou de senha do dispositivo falhou. Por favor, tente novamente.');
-        }
+        isAuthenticated = result.success;
       } else {
+        // Se a autenticação biométrica não estiver disponível, solicite a senha do dispositivo
+        isAuthenticated = await LocalAuthentication.authenticateAsync({ promptMessage: 'Autenticação de senha do dispositivo' });
+      }
+  
+      if (isAuthenticated) {
         const auth = getAuth();
-        await signInWithEmailAndPassword(auth, email, senha);
+        const login = await signInWithEmailAndPassword(auth, email, senha);
         await SecureStore.setItemAsync('userEmail', email);
         await SecureStore.setItemAsync('userPassword', senha);
         navigation.navigate("MainTabs");
+      } else {
+        Alert.alert('Erro', 'Autenticação biométrica ou de senha do dispositivo falhou. Por favor, tente novamente.');
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -57,6 +56,8 @@ const LoginScreen = ({navigation }) => {
       setIsLoading(false);
     }
   };
+  
+  
 
   useEffect(() => {
     const loadCredentials = async () => {

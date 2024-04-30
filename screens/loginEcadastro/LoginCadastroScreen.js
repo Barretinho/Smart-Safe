@@ -69,24 +69,28 @@ const LoginCadastroScreen = () => {
       const savedSenha = await SecureStore.getItemAsync("userPassword");
       if (savedEmail && savedSenha) {
         // Verificar se a autenticação biométrica está disponível
-        const isBiometricAvailable =
-          (await LocalAuthentication.hasHardwareAsync()) &&
-          (await LocalAuthentication.isEnrolledAsync());
+        const isBiometricAvailable = (await LocalAuthentication.hasHardwareAsync()) && (await LocalAuthentication.isEnrolledAsync());
+        let isAuthenticated = false;
+  
         if (isBiometricAvailable) {
           // Se disponível, solicitar autenticação biométrica
           const result = await LocalAuthentication.authenticateAsync({
-            promptMessage:
-              "Autenticação",
+            promptMessage: "Autenticação",
           });
-          if (result.success) {
-            setShowWelcomeModal(true);
-            navigation.navigate('MainTabs')
-          } else {
-            // Se a autenticação biométrica falhar, navegar para a tela de login
-            navigation.navigate("Login");
-          }
+          isAuthenticated = result.success;
         } else {
-          // Se autenticação biométrica não estiver disponível, navegar para a tela de login
+          // Se autenticação biométrica não estiver disponível, solicitar autenticação de senha do dispositivo
+          const result = await LocalAuthentication.authenticateAsync({
+            promptMessage: "Autenticação de senha do dispositivo",
+          });
+          isAuthenticated = result.success;
+        }
+  
+        if (isAuthenticated) {
+          setShowWelcomeModal(true);
+          navigation.navigate('MainTabs')
+        } else {
+          // Se a autenticação falhar, navegar para a tela de login
           navigation.navigate("Login");
         }
       }
@@ -94,6 +98,7 @@ const LoginCadastroScreen = () => {
       console.error("Erro ao verificar o estado de autenticação:", error);
     }
   };
+  
 
   const handleEntrar = () => {
     navigation.navigate("Login");
