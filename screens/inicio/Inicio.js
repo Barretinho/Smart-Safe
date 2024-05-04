@@ -225,6 +225,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 30,
   },
   emergencyText: {
     color: 'white',
@@ -235,17 +236,6 @@ const styles = StyleSheet.create({
     color: 'green',
     fontSize: 16,
     fontWeight: 'bold'
-  },
-  chatButton: {
-    position: 'absolute',
-    bottom: 20,
-    backgroundColor: '#4CAF50',
-    borderRadius: 30,
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    right: 10,
   },
 });
 

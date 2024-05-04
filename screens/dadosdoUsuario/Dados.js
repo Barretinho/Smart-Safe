@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Alert, ScrollView, TextInput, TouchableOpacity } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { getDatabase, get, ref, child, update } from "firebase/database";
 import { getAuth } from "firebase/auth";
@@ -8,6 +8,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 const DadosdoUsuario = ({ route }) => {
   const [perfilData, setPerfilData] = useState(null);
+  const [editingField, setEditingField] = useState(null);
+  const [novoNome, setNovoNome] = useState("");
+  const [novoSobrenome, setNovoSobrenome] = useState("");
+  const [novoEmail, setNovoEmail] = useState("");
+  const [novaRua, setNovaRua] = useState("");
+  const [novoBairro, setNovoBairro] = useState("");
+  const [novaCidade, setNovaCidade] = useState("");
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -46,6 +53,37 @@ const DadosdoUsuario = ({ route }) => {
     fetchUserProfile();
   }, []);
 
+  const handleAtualizarPerfil = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const dbref = ref(getDatabase());
+        const novoPerfil = {};
+        if (novoNome.trim() !== "") novoPerfil.nome = novoNome;
+        if (novoSobrenome.trim() !== "") novoPerfil.sobrenome = novoSobrenome;
+        if (novoEmail.trim() !== "") novoPerfil.email = novoEmail;
+        if (novaRua.trim() !== "") novoPerfil.rua = novaRua;
+        if (novoBairro.trim() !== "") novoPerfil.bairro = novoBairro;
+        if (novaCidade.trim() !== "") novoPerfil.cidade = novaCidade;
+        
+        await update(child(dbref, `users/${user.uid}`), novoPerfil);
+        Alert.alert("Perfil atualizado com sucesso!");
+        setEditingField(null); // Limpar campo de edição após salvar
+      } else {
+        console.log("Usuário não autenticado");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar perfil:", error);
+      Alert.alert("Erro ao atualizar perfil. Por favor, tente novamente mais tarde.");
+    }
+  };
+
+  const handleEditField = (fieldName) => {
+    setEditingField(fieldName);
+  };
+
   if (!perfilData) {
     return (
       <View style={styles.container}>
@@ -62,14 +100,42 @@ const DadosdoUsuario = ({ route }) => {
           <FontAwesome name="user" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Nome:</Text>
-            <Text style={styles.value}>{perfilData.nome}</Text>
+            {editingField === "nome" ? (
+              <TextInput
+                style={styles.input}
+                value={novoNome}
+                onChangeText={setNovoNome}
+                placeholder={perfilData.nome}
+              />
+            ) : (
+              <Text style={styles.value}>{perfilData.nome}</Text>
+            )}
+            {editingField !== "nome" && (
+              <TouchableOpacity onPress={() => handleEditField("nome")}>
+                <FontAwesome name="pencil" size={20} color="white" style={styles.editIcon} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View style={styles.userData}>
           <FontAwesome name="user" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Sobrenome:</Text>
-            <Text style={styles.value}>{perfilData.sobrenome}</Text>
+            {editingField === "sobrenome" ? (
+              <TextInput
+                style={styles.input}
+                value={novoSobrenome}
+                onChangeText={setNovoSobrenome}
+                placeholder={perfilData.sobrenome}
+              />
+            ) : (
+              <Text style={styles.value}>{perfilData.sobrenome}</Text>
+            )}
+            {editingField !== "sobrenome" && (
+              <TouchableOpacity onPress={() => handleEditField("sobrenome")}>
+                <FontAwesome name="pencil" size={20} color="white" style={styles.editIcon} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View style={styles.userData}>
@@ -97,28 +163,75 @@ const DadosdoUsuario = ({ route }) => {
           <FontAwesome name="map-marker" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Rua:</Text>
-            <Text style={styles.value}>{perfilData.rua}</Text>
+            {editingField === "rua" ? (
+              <TextInput
+                style={styles.input}
+                value={novaRua}
+                onChangeText={setNovaRua}
+                placeholder={perfilData.rua}
+              />
+            ) : (
+              <Text style={styles.value}>{perfilData.rua}</Text>
+            )}
+            {editingField !== "rua" && (
+              <TouchableOpacity onPress={() => handleEditField("rua")}>
+                <FontAwesome name="pencil" size={20} color="white" style={styles.editIcon} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View style={styles.userData}>
           <FontAwesome name="map-marker" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Bairro:</Text>
-            <Text style={styles.value}>{perfilData.bairro}</Text>
+            {editingField === "bairro" ? (
+              <TextInput
+                style={styles.input}
+                value={novoBairro}
+                onChangeText={setNovoBairro}
+                placeholder={perfilData.bairro}
+              />
+            ) : (
+              <Text style={styles.value}>{perfilData.bairro}</Text>
+            )}
+            {editingField !== "bairro" && (
+              <TouchableOpacity onPress={() => handleEditField("bairro")}>
+                <FontAwesome name="pencil" size={20} color="white" style={styles.editIcon} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View style={styles.userData}>
           <FontAwesome name="map-marker" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Cidade:</Text>
-            <Text style={styles.value}>{perfilData.cidade}</Text>
+            {editingField === "cidade" ? (
+              <TextInput
+                style={styles.input}
+                value={novaCidade}
+                onChangeText={setNovaCidade}
+                placeholder={perfilData.cidade}
+              />
+            ) : (
+              <Text style={styles.value}>{perfilData.cidade}</Text>
+            )}
+            {editingField !== "cidade" && (
+              <TouchableOpacity onPress={() => handleEditField("cidade")}>
+                <FontAwesome name="pencil" size={20} color="white" style={styles.editIcon} />
+              </TouchableOpacity>
+            )}
           </View>
+        </View>
+        <View style={styles.saveButtonContainer}>
+          <TouchableOpacity onPress={handleAtualizarPerfil}>
+            <Text style={styles.label}>Salvar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
   );
-  
-}
+};
+
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
@@ -150,6 +263,8 @@ const styles = StyleSheet.create({
   },
   labelValueContainer: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
   },
   label: {
     fontWeight: "100",
@@ -161,10 +276,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold'
   },
+  editIcon: {
+    marginLeft: 5,
+  },
+  input: {
+    backgroundColor: "white",
+    borderRadius: 5,
+    padding: 5,
+    marginTop: 5,
+    marginRight: 5,
+    flex: 1,
+  },
   errorText: {
     fontSize: 18,
     textAlign: "center",
     color: "red",
+  },
+  saveButtonContainer: {
+    alignItems: "center",
+    marginTop: 20,
   },
 });
 
