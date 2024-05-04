@@ -68,18 +68,18 @@ const MainTabs = ({ navigation }) => {
       screenOptions={{
         drawerStyle: {
           backgroundColor: "#3c0c7b",
-          width: 240,
+          width: 250,
         },
         drawerActiveTintColor: "#9344fa",
         drawerInactiveTintColor: "#fff",
         itemStyle: { marginVertical: 5 },
-        labelStyle: { fontSize: 25, fontWeight: "normal" },
+        drawerLabelStyle:{ fontSize: 16, paddingVertical: 3},
         headerStyle: {
-          height: 90,
+          height: 95,
           backgroundColor: "#9344fa",
         },
         headerTintColor: "#fff",
-        drawerStatusBarAnimation: "slide",
+        drawerStatusBarAnimation: 'fade',
         headerTitleStyle: {
           fontWeight: "100",
         },
@@ -90,7 +90,7 @@ const MainTabs = ({ navigation }) => {
           >
               <Image
                 source={{ uri: perfilImage || `https://avatar.iran.liara.run/username?username=${perfilNome +"+"+ perfilSobrenome}` }}
-                style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: "#3c0c7b"}}
+                style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: "#fff"}}
               />
           </TouchableOpacity>
         ),
@@ -136,16 +136,6 @@ const MainTabs = ({ navigation }) => {
           ),
         }}
       />
-      <Drawer.Screen
-        name="Dados do Usuário"
-        component={DadosdoUsuario}
-        options={{
-          headerTitle: '',
-          drawerIcon: ({ color, size }) => (
-            <Icon name="user" size={size} color={color} />
-          ),
-        }}
-      />
     </Drawer.Navigator>
   );
 };
@@ -156,7 +146,7 @@ const App = () => {
     <NavigationContainer>
       <StatusBar
     barStyle = "#fff"
-    backgroundColor={"transparent"}
+    backgroundColor={"#0006"}
     hidden = {false}
     translucent = {true}
     networkActivityIndicatorVisible = {true}
@@ -198,7 +188,13 @@ const App = () => {
         <Stack.Screen
           name="MapScreen"
           component={MapScreen}
-          options={{ headerShown: false }}
+          options={{
+            title: "Sua localização",
+            headerStyle: {
+              backgroundColor: "#9344fa",
+            },
+            headerTintColor: "#fff",
+          }}
         />
         <Stack.Screen
           name="Emergencia"
@@ -213,7 +209,13 @@ const App = () => {
         <Stack.Screen
           name="Dados do Usúario"
           component={DadosdoUsuario}
-          options={{ headerShown: false }}
+          options={{
+            title: "Seus Dados",
+            headerStyle: {
+              backgroundColor: "#9344fa",
+            },
+            headerTintColor: "#fff",
+          }}
         />
         <Stack.Screen
           name="Audios Gravados"

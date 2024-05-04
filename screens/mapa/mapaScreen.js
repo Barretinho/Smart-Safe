@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps'; // Importando Marker
 import * as Location from 'expo-location';
-import { Ionicons } from '@expo/vector-icons';
 
 const MapScreen = ({ navigation }) => {
   const [mapRegion, setMapRegion] = useState(null);
   const mapRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(0);
   const mapLayoutTimeout = useRef(null);
-  const [mapType, setMapType] = useState('satellite'); // Estado para controlar o tipo de mapa
+  const [mapType, setMapType] = useState('standard'); // Alterado para 'standard'
+  const [streetName, setStreetName] = useState("");
+  const [nearestReference, setNearestReference] = useState("");
+  const [markers, setMarkers] = useState([]); // Estado para armazenar os marcadores
 
   useEffect(() => {
     const subscribeToLocationUpdates = async () => {
@@ -27,6 +29,23 @@ const MapScreen = ({ navigation }) => {
           latitudeDelta: 0.001,
           longitudeDelta: 0.001,
         });
+
+        const street = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+        if (street && street.length > 0) {
+          setStreetName(street[0].name || "");
+          setNearestReference(street[0].street || "");
+        }
+
+        // Mock de lugares próximos
+        const nearbyPlaces = [
+          { key: 1, coordinate: { latitude: location.coords.latitude + 0.001, longitude: location.coords.longitude + 0.001 }, title: 'Exemplo 1', description: 'Descrição 1' },
+          { key: 2, coordinate: { latitude: location.coords.latitude - 0.001, longitude: location.coords.longitude - 0.001 }, title: 'Exemplo 2', description: 'Descrição 2' },
+          // Adicione mais lugares conforme necessário
+        ];
+        setMarkers(nearbyPlaces);
       } catch (error) {
         console.error("Erro ao obter a localização:", error);
       }
@@ -56,7 +75,6 @@ const MapScreen = ({ navigation }) => {
   };
 
   const toggleMapType = () => {
-    // Alternar entre os tipos de mapa
     switch (mapType) {
       case 'satellite':
         setMapType('standard');
@@ -74,14 +92,6 @@ const MapScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Localização Atual</Text>
-      </View>
-
-      {/* Mapa */}
       <View style={{ flex: 1 }}>
         <MapView
           provider={MapView.PROVIDER_GOOGLE}
@@ -90,14 +100,20 @@ const MapScreen = ({ navigation }) => {
           mapType={mapType}
           showsUserLocation={true}
           onLayout={handleMapLayoutChange}
+          onRegionChangeComplete={handleMapRegionChange}
           ref={mapRef}
-        />
+        >
+        </MapView>
       </View>
 
-      {/* Botão para alternar o tipo de mapa */}
       <TouchableOpacity style={styles.mapTypeButton} onPress={toggleMapType}>
         <Text style={styles.mapTypeButtonText}>{getMapTypeName(mapType)}</Text>
       </TouchableOpacity>
+
+      <View style={styles.bottomBox}>
+        <Text style={styles.streetName}>{streetName}</Text>
+        <Text style={styles.reference}>{nearestReference}</Text>
+      </View>
     </View>
   );
 };
@@ -119,22 +135,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    backgroundColor: '#9344fa',
-    paddingTop: 35,
-    paddingBottom: 15,
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingHorizontal: 10,
-  },
-  backButton: {
-    marginRight: 5,
-  },
-  headerText: {
-    color: 'white',
-    fontSize: 18,
-    flex: 1,
-  },
   map: {
     width: "100%",
     height: "100%",
@@ -143,14 +143,34 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#3c0c7b',
+    backgroundColor: '#fff9',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
   },
   mapTypeButtonText: {
-    color: 'white',
+    color: '#000',
     fontSize: 16,
+  },
+  bottomBox: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    width: 250,
+  },
+  streetName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  reference: {
+    fontSize: 14,
+    color: '#555',
   },
 });
 

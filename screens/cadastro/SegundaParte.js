@@ -172,7 +172,7 @@ const SegundaParte = () => {
         }, 3000);
 
         setTimeout(() => {
-          navigation.navigate("LoginCadastro");
+          navigation.navigate("Login");
         }, 2000);
       }
     } catch (error) {

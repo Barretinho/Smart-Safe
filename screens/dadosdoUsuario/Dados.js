@@ -59,56 +59,56 @@ const DadosdoUsuario = ({ route }) => {
       <View style={styles.innerContainer}>
         <Text style={styles.title}>Dados do Usuário:</Text>
         <View style={styles.userData}>
-          <FontAwesome name="user" size={28} color="#3b5998" style={styles.labelIcon} />
+          <FontAwesome name="user" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Nome:</Text>
             <Text style={styles.value}>{perfilData.nome}</Text>
           </View>
         </View>
         <View style={styles.userData}>
-          <FontAwesome name="user" size={28} color="#3b5998" style={styles.labelIcon} />
+          <FontAwesome name="user" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Sobrenome:</Text>
             <Text style={styles.value}>{perfilData.sobrenome}</Text>
           </View>
         </View>
         <View style={styles.userData}>
-          <MaterialIcons name="email" size={26} color="#3b5998" style={styles.labelIcon} />
+          <MaterialIcons name="email" size={26} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>E-mail:</Text>
             <Text style={styles.value}>{perfilData.email}</Text>
           </View>
         </View>
         <View style={styles.userData}>
-          <FontAwesome name="calendar" size={26} color="#3b5998" style={styles.labelIcon} />
+          <FontAwesome name="calendar" size={26} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Data de Nascimento:</Text>
             <Text style={styles.value}>{perfilData.dataNascimento}</Text>
           </View>
         </View>
         <View style={styles.userData}>
-          <FontAwesome name="id-card" size={24} color="#3b5998" style={styles.labelIcon} />
+          <FontAwesome name="id-card" size={24} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>CPF:</Text>
             <Text style={styles.value}>{perfilData.cpf}</Text>
           </View>
         </View>
         <View style={styles.userData}>
-          <FontAwesome name="map-marker" size={28} color="#3b5998" style={styles.labelIcon} />
+          <FontAwesome name="map-marker" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Rua:</Text>
             <Text style={styles.value}>{perfilData.rua}</Text>
           </View>
         </View>
         <View style={styles.userData}>
-          <FontAwesome name="map-marker" size={28} color="#3b5998" style={styles.labelIcon} />
+          <FontAwesome name="map-marker" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Bairro:</Text>
             <Text style={styles.value}>{perfilData.bairro}</Text>
           </View>
         </View>
         <View style={styles.userData}>
-          <FontAwesome name="map-marker" size={28} color="#3b5998" style={styles.labelIcon} />
+          <FontAwesome name="map-marker" size={28} color="white" style={styles.labelIcon} />
           <View style={styles.labelValueContainer}>
             <Text style={styles.label}>Cidade:</Text>
             <Text style={styles.value}>{perfilData.cidade}</Text>
@@ -139,10 +139,11 @@ const styles = StyleSheet.create({
   userData: {
     flexDirection: "row",
     marginBottom: 10,
-    backgroundColor: "#fff", // cor de fundo dos dados do usuário
     borderRadius: 10, // bordas arredondadas
     padding: 10, // espaço interno
     alignItems: 'center', // alinhamento vertical
+    borderWidth: 1,
+    borderColor: 'white',
   },
   labelIcon: {
     marginRight: 15, // Adicionando margem direita ao ícone
@@ -151,13 +152,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontWeight: "bold",
-    color: '#3b5998', // azul do Facebook
+    fontWeight: "100",
+    color: '#fff', // azul do Facebook
     fontSize: 18,
   },
   value: {
-    color: '#333', // cor do texto
+    color: '#fff', // cor do texto
     fontSize: 18,
+    fontWeight: 'bold'
   },
   errorText: {
     fontSize: 18,

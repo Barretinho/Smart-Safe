@@ -2,9 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Alert, Animated, StatusBar } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-import { getStorage, uploadBytesResumable, ref as sRef, getDownloadURL, deleteObject } from 'firebase/storage';
+import { getStorage, uploadBytesResumable, ref as sRef, getDownloadURL, deleteObject, updateMetadata } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import { addDoc, getFirestore, collection } from 'firebase/firestore';
+import { app } from '../../src/config/firebase';
+import utils from '../../src/utils';
+
 
 const Inicio = () => {
   const [recording, setRecording] = useState();
@@ -45,7 +49,7 @@ const Inicio = () => {
       });
 
       console.log('Starting recording..');
-      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
       setRecording(recording);
       console.log('Recording started');
     } catch (err) {
@@ -61,7 +65,7 @@ const Inicio = () => {
     const uri = recording.getURI();
     console.log('Recording stopped and stored at', uri);
     setUploading(true);
-    uploadRecording(uri);
+    await uploadRecording(uri);
   }
 
   const uploadRecording = async (uri) => {
@@ -73,6 +77,7 @@ const Inicio = () => {
       const storageRef = sRef(storage, `recordings/${uid}/${Date.now()}.mp3`);
       const response = await fetch(uri);
       const blob = await response.blob();
+      updateMetadata(storageRef, {contentType: "audio/mp3"})
   
       const uploadTask = uploadBytesResumable(storageRef, blob);
   
@@ -105,6 +110,20 @@ const Inicio = () => {
               setUploaded(false);
             }, 3000);
             setUploadProgress(0);
+            utils.fetchUserProfile().then((profile) => {
+              const { nome, sobrenome, rua, bairro, cidade } = profile
+              addDoc(collection(getFirestore(app), "calls"), {
+                nome: nome+ " " +sobrenome,
+                local: rua+ ", " + bairro + ", " + cidade,
+                horario: (new Date()).getTime(),
+                audio: downloadURL
+              }).then(() => {}).catch(err => {
+                console.log("Firestore:", err)
+              })
+            }).catch(err => {
+              console.log(err)
+            })
+
             Animated.timing(uploadProgressAnimation, {
               toValue: 0,
               duration: 200,
@@ -117,24 +136,23 @@ const Inicio = () => {
       console.error("Error uploading recording:", error);
       setUploading(false);
     }
-  };
+  }; 
+
+const handleEmergencyCall = async () => {
+
+  Alert.alert('Olá')  
+};
+
+
   
-
-  const handleEmergencyCall = () => {
-    // Lógica para acionar o contato de emergência pessoal
-    Alert.alert('Emergência', 'Contato de emergência pessoal acionado.');
-  };
-
-  const handleOpenChatBot = () => {
-    navigation.navigate('ChatBot'); // Navegue para a tela do ChatBot
-  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.sosButton, recording && styles.sosButtonRecording]}
         onPress={recording ? stopRecording : startRecording}>
-        <FontAwesome name="microphone" size={40} color="white" />
+        <FontAwesome name="exclamation-triangle" size={60} color="white" />
+        <Text style={styles.titleSOS}>SOS</Text>
       </TouchableOpacity>
       {uploading && (
         <View style={styles.progressContainer}>
@@ -150,9 +168,7 @@ const Inicio = () => {
         <FontAwesome name="phone" size={27} color="white" />
         <Text style={styles.emergencyText}>Acionar contato de emergência pessoal</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.chatButton} onPress={handleOpenChatBot}>
-        <FontAwesome name="comments" size={24} color="white" />
-      </TouchableOpacity>
+      
     </View>
   );
 };
@@ -163,19 +179,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3c0c7b',
-    gap: 30
+    gap: 100,
   },
   sosButton: {
-    backgroundColor: 'red',
+    backgroundColor: '#9344fa',
     borderRadius: 100,
-    height: 130,
-    width: 130,
+    height: 200,
+    width: 200,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    gap: 5,
   },
   sosButtonRecording: {
     backgroundColor: 'darkred',
+  },
+  titleSOS:{
+    color: 'white',
+    fontSize: 26,
+    fontWeight:'bold'
   },
   progressContainer: {
     width: '40%',
@@ -199,7 +221,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   emergencyButton: {
-    backgroundColor: '#3b5998',
+    backgroundColor: '#9344fa',
     borderRadius: 8,
     paddingVertical: 15,
     paddingHorizontal: 20,

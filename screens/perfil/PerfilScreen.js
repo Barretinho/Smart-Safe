@@ -147,6 +147,10 @@ const Perfil = ({ navigation }) => {
     navigation.navigate("MapScreen");
   };
 
+  const handleDataUser = () => {
+    navigation.navigate("Dados do Usúario")
+  }
+
   const handleLogout = async () => {
     try {
       await SecureStore.deleteItemAsync("userEmail");
@@ -171,7 +175,6 @@ const Perfil = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.profileContainer}>
-        <Text style={styles.title}>Foto de Perfil</Text>
         <TouchableOpacity onPress={pickImage}>
           <Image
             source={{
@@ -181,7 +184,7 @@ const Perfil = ({ navigation }) => {
 
               `https://avatar.iran.liara.run/username?username=${perfilData && perfilData.nome +"+"+ perfilData.sobrenome} `
             }}
-            style={{ width: 115, height: 115, borderRadius: 200, borderWidth: 2, borderColor: "#fff8", }}
+            style={{ width: 100, height: 100, borderRadius: 100, borderWidth: 2, borderColor: "#fff", }}
           />
         </TouchableOpacity>
         {image && !uploaded && (
@@ -200,8 +203,16 @@ const Perfil = ({ navigation }) => {
             <Text style={styles.email}>{perfilData && perfilData.email}</Text>
           </View>
         )}
-      </View>
 
+        <View>
+          <TouchableOpacity
+          onPress={handleDataUser}
+          >
+            <Text style={styles.dataUser}>Ver Dados Completos</Text>
+          </TouchableOpacity>
+        </View>
+
+      </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={handleGoToMap}
@@ -226,18 +237,22 @@ const Perfil = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
     backgroundColor: "#3c0c7b",
   },
   profileContainer: {
     display: "flex",
     backgroundColor: "#9344fa",
-    borderRadius: 25,
-    gap: 15,
+    gap: 10,
     flexDirection: "column",
-    padding: 15,
+    padding: 20,
     alignItems: "center",
+    borderTopWidth: 0.5,
+    borderColor: '#0008'
+  },
+  dataUser:{
+    fontWeight: 'bold',
+    color: 'white',
+
   },
   title: {
     fontSize: 22,
