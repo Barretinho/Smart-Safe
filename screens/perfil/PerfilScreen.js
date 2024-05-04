@@ -131,9 +131,16 @@ const Perfil = ({ navigation }) => {
 
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log("File available at", downloadURL);
-            update(ref(database, `users/${user.uid}`), { foto: downloadURL });
-            setUploading(false);
-            setUploaded(true);
+            update(ref(database, `users/${user.uid}`), { foto: downloadURL })
+              .then(() => {
+                setUploading(false);
+                setUploaded(true);
+                fetchUserProfile(); // Atualiza os dados do perfil após a atualização
+              })
+              .catch((error) => {
+                console.error("Error updating user data:", error);
+                setUploading(false);
+              });
           });
         }
       );
