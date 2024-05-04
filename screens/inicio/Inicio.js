@@ -49,7 +49,7 @@ const Inicio = () => {
       });
 
       console.log('Starting recording..');
-      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
+      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY); 
       setRecording(recording);
       console.log('Recording started');
     } catch (err) {
@@ -74,11 +74,10 @@ const Inicio = () => {
       const user = auth.currentUser;
       const uid = user.uid;
       const storage = getStorage();
-      const storageRef = sRef(storage, `recordings/${uid}/${Date.now()}.mp3`);
+      const storageRef = sRef(storage, `recordings/${uid}/${Date.now()}.mpeg`);
       const response = await fetch(uri);
       const blob = await response.blob();
-      updateMetadata(storageRef, {contentType: "audio/mp3"})
-  
+
       const uploadTask = uploadBytesResumable(storageRef, blob);
   
       uploadTask.on(
@@ -179,7 +178,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3c0c7b',
-    gap: 100,
   },
   sosButton: {
     backgroundColor: '#9344fa',
