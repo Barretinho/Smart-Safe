@@ -13,7 +13,6 @@ import { getDatabase, get, ref, child, update } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { white } from "color-name";
 
 const DadosdoUsuario = ({ route }) => {
   const [perfilData, setPerfilData] = useState(null);
@@ -74,6 +73,7 @@ const DadosdoUsuario = ({ route }) => {
         const novoPerfil = {};
         if (novoNome.trim() !== "") novoPerfil.nome = novoNome;
         if (novoSobrenome.trim() !== "") novoPerfil.sobrenome = novoSobrenome;
+        if (novoEmail.trim() !== "") novoPerfil.email = novoEmail;
         if (novoEmail.trim() !== "") novoPerfil.email = novoEmail;
         if (novaRua.trim() !== "") novoPerfil.rua = novaRua;
         if (novoBairro.trim() !== "") novoPerfil.bairro = novoBairro;
@@ -176,15 +176,34 @@ const DadosdoUsuario = ({ route }) => {
           </View>
         </View>
         <View style={styles.userData}>
-          <MaterialIcons
-            name="email"
-            size={26}
+          <FontAwesome
+            name="user"
+            size={28}
             color="white"
             style={styles.labelIcon}
           />
           <View style={styles.labelValueContainer}>
-            <Text style={styles.label}>E-mail:</Text>
-            <Text style={styles.value}>{perfilData.email}</Text>
+            <Text style={styles.label}>Email:</Text>
+            {editingField === "email" ? (
+              <TextInput
+                style={styles.input}
+                value={novoEmail}
+                onChangeText={setNovoEmail}
+                placeholder={perfilData.email}
+              />
+            ) : (
+              <Text style={styles.value}>{perfilData.email}</Text>
+            )}
+            {editingField !== "email" && (
+              <TouchableOpacity onPress={() => handleEditField("email")}>
+                <FontAwesome
+                  name="pencil"
+                  size={20}
+                  color="white"
+                  style={styles.editIcon}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View style={styles.userData}>

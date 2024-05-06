@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   quadrado: {
-    backgroundColor: 'red',
+    backgroundColor: '#9344fa',
     borderRadius: 5,
     marginBottom: 20,
     alignItems: 'center',

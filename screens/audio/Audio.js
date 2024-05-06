@@ -59,6 +59,9 @@ const AudioScreen = () => {
         return { item, createdAt, audioNumber };
       }));
 
+      // Ordena os áudios pelo mais recente primeiro
+      audioListWithMetadata.sort((a, b) => b.createdAt - a.createdAt);
+
       setAudioList(audioListWithMetadata);
     } catch (error) {
       console.error('Erro ao buscar lista de áudios:', error);
@@ -217,7 +220,7 @@ const AudioScreen = () => {
           />
         )}
         keyExtractor={(item, index) => index.toString()}
-        ListEmptyComponent={<Text>Nenhum áudio disponível</Text>}
+        ListEmptyComponent={<Text style={styles.titleText}>Nenhum áudio disponível</Text>}
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
@@ -261,6 +264,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 10,
   },
+  titleText:{
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+  }
 });
 
 export default AudioScreen;
