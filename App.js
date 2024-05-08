@@ -18,7 +18,7 @@ import Audio from "./screens/audio/Audio"
 import ChatBot from "./screens/ChatBot/ChatBot";
 import Emergencia from "./screens/ContatosdeEmergencia/ContatosEmergencia";
 import { getAuth } from "firebase/auth";
-import { getDatabase, ref, child, get, set } from "firebase/database";
+import { getDatabase, ref, child, get } from "firebase/database";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();

@@ -161,7 +161,7 @@ const handleEmergencyCall = async () => {
         </View>
       )}
       {uploaded && (
-        <Text style={styles.uploadedText}>Gravação enviada com sucesso!</Text>
+        <Text style={styles.uploadedText}>Pedido de SOS enviado com sucesso!</Text>
       )}
       <TouchableOpacity style={styles.emergencyButton} onPress={handleEmergencyCall}>
         <FontAwesome name="phone" size={27} color="white" />
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3c0c7b',
+    gap: 20,
   },
   sosButton: {
     backgroundColor: '#9344fa',
@@ -199,24 +200,14 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     width: '40%',
-    height: 5,
+    height: 7,
     backgroundColor: '#fff',
     borderRadius: 5,
-    marginBottom: 10,
   },
   progressBar: {
     height: '100%',
-    backgroundColor: 'green',
-    borderRadius: 5,
-  },
-  audioPreview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  audioControls: {
-    marginHorizontal: 10,
+    backgroundColor: '#9344fa',
+    borderRadius: 7,
   },
   emergencyButton: {
     backgroundColor: '#9344fa',
@@ -225,7 +216,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 30,
+    marginTop:80,
   },
   emergencyText: {
     color: 'white',
@@ -233,7 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   uploadedText: {
-    color: 'green',
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold'
   },
